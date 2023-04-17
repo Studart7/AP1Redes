@@ -4,95 +4,74 @@ import socket
 
 
 class PTATCLiente:
-        def enviar_requisicao(self, requisicao):
-            global x
-            global endereco_servidor
-            for i in requisicao:
-                x.sendto(i.encode(), endereco_servidor) 
+    def __init__(self):
+        self.x = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.endereco_servidor = "localhost", 200
 
-        def receber_resposta(self):
-            global endereco_cliente
-            global x
-            resposta = []
-            for i in range(7):
-                mensagem, endereco_servidor = x.recvfrom(4000000)
-                mensagem = mensagem.decode()
-                print(mensagem) 
-                resposta.append(mensagem)
+    def enviar_requisicao(self, requisicao):
+        for i in requisicao:
+            self.x.sendto(i.encode(), self.endereco_servidor)
 
-        def _init_(self):
-            self.y = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            endereco_servidor = "localhost", 200
-            self.y.bind(endereco_servidor)
-            mensagem, endereco_cliente = self.y.recvfrom(1024)
+    def receber_resposta(self):
+        resposta = []
+        for i in range(7):
+            mensagem, endereco_servidor = self.x.recvfrom(4000000)
             mensagem = mensagem.decode()
-            print(mensagem)
-            self.y.sendto("oi".encode(), endereco_cliente)
-            lista = []
-            for i in range(3):
-                mensagem, endereco_cliente = self.y.recvfrom(1024)
-                mensagem = mensagem.decode()
-                print(mensagem) 
-                lista.append(mensagem)   
-            for i in lista:
-                self.y.sendto(i.encode(), endereco_cliente)
+            resposta.append(mensagem)
+        return resposta
 
-#fazer funcao pede pro usuario comando, e ela pega o comando e retorna requisicao
+def pedir_comando():
+    return input("Insira o comando: ")
 
-
-    
 def formatar_msg(msg):
-    # Separa a mensagem em partes utilizando o espaço como separador
     msg_separada = re.split(r'[/\s]+', msg)
-
-    # Verifica qual operação deve ser realizada
-    if msg_separada[0] == 'read': #adicionar "or del"
+    filename_remote = ""
+    body = ""
+    length = 0
+    if msg_separada[0] == 'read': 
         op = '0'
-        caminho_remote = msg_separada[1]       
-        filename_remote = msg_separada[2]      
-        file = open(caminho_remote+"/"+filename_remote, "r")
-        body = file.read()  
-        length = len(body)
+        filename_remote = msg_separada[2]
+        caminho_remote = msg_separada[1]
+        length = ""
     elif msg_separada[0] == 'write':
         op = '1'
         caminho_local = msg_separada[1]
-        filename_local = msg_separada[2]    
-        caminho_remote = msg_separada[3]    
-        filename_remote = msg_separada[4]       
-        file = open(caminho_local+"/"+filename_local, "r")
-        body = file.read()                  
-        length = len(body)                  
+        filename_local = msg_separada[2]
+        caminho_remote = msg_separada[3]
+        filename_remote = msg_separada[4]
+        file = open((caminho_local+"/"+filename_local), "r")
+        body = file.read()
+        length = len(body)
+        file.close()
     elif msg_separada[0] == 'del':
         op = '2'
-        caminho_local = msg_separada[1]
-        filename_remote = msg_separada[2]  
-        
+        caminho_remote = msg_separada[1]
+        filename_remote = msg_separada[2]
     elif msg_separada[0] == 'list':
         op = '3'
-        caminho_remoto = msg_separada[1]
+        caminho_remote = msg_separada[1]
     return formatar_lista(op, length, filename_remote, caminho_remote, body)
-            
-def formatar_lista(op, length, filename, PATH, body):
-        requisicao = [
-            op,
-            f"{length:0>6}",
-            filename.ljust(64),
-            PATH.ljust(128),
-            body
-        ]
-        return requisicao 
-    
 
+def formatar_lista(op, length, filename, PATH, body):
+    requisicao = [
+        op,
+        f"{length:0>6}",
+        filename.ljust(64),
+        PATH.ljust(128),
+        body
+    ]
+    return requisicao
 
 def Principal():
     cliente = PTATCLiente()
     while True:
-        comando = input("Insira o comando: ")
+        comando = pedir_comando()
         requisicao = formatar_msg(comando)
-        #cliente.enviar_requisicao(requisicao)
-        print("Enviei a requisicao")
+        cliente.enviar_requisicao(requisicao)
         resposta = cliente.receber_resposta()
-        print("Enviei a resposta")
-        print(resposta)
-        
+        print(resposta[5])
+        print(resposta[6])
+
 Principal()
+
+input()
