@@ -2,38 +2,25 @@ import re
 import os
 import socket
 
+
 class PTATCLiente:
     x = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     endereco_servidor = "localhost", 200
-    mensagem, endereco_servidor = x.recvfrom(1024)
-    mensagem = mensagem.decode()
-    print(mensagem)
-    input()
-    lista  = ["oi", "tudo bem", "como vai"]
-    for i in lista:
-        x.sendto(i.encode(), endereco_servidor)
-    for i in lista:
-        mensagem, endereco_servidor = x.recvfrom(1024)
-        mensagem = mensagem.decode()
-        print(mensagem)    
-    input()
-
-    def enviar_requisicao(requisicao):
-        global x
-        global endereco_servidor
+    def enviar_requisicao(self, requisicao):
         for i in requisicao:
-            x.sendto(i.encode(), endereco_servidor) 
-
-    def receber_resposta():
-        global x
-        global endereco_servidor
+            self.x.sendto(i.encode(), self.endereco_servidor) 
+    def receber_resposta(self):
+        resposta = []
+        for i in range(5):
+            mensagem, endereco_cliente = self.x.recvfrom(4000000)
+            mensagem = mensagem.decode()
+            print(mensagem) 
+            resposta.append(mensagem)
+        return resposta
 
 #fazer funcao pede pro usuario comando, e ela pega o comando e retorna requisicao
-"""
-def testando():
-    x = input("Insira o comando:")
-    print(formatar_msg(x))
-"""
+
+
     
 def formatar_msg(msg):
     # Separa a mensagem em partes utilizando o espaço como separador
@@ -76,30 +63,20 @@ def formatar_lista(op, length, filename, PATH, body):
         ]
         return requisicao
     
-def fileReader(self, PATH, fileName):
-        if os.path.exists(PATH):
-            if os.path.exists(PATH+"/"+fileName):
-                file = open(PATH+"/"+fileName, "r")
-                body = file.read()
-                print(body)
-                lenght = len(body)
-                if lenght < 999999:
-                    CODE = 0
-                    message = "Arquivo lido com sucesso"
-                else:
-                    CODE = 3
-                    message = "Tamanho do arquivo para ser escrito maior que tamanho máximo permitido"
-            else:
-                message = "Nome de arquivo não existente no servidor"
-                CODE = 2
-        else:
-            message = "Caminho não existente no servidor"
-            CODE = 1
-        return (CODE, message)
-    
-    
-    
-    
+
+
+def Principal():
+    cliente = PTATCLiente()
+    while True:
+        comando = input("Insira o comando: ")
+        requisicao = formatar_msg(comando)
+        #cliente.enviar_requisicao(requisicao)
+        print("Enviei a requisicao")
+        resposta = cliente.receber_resposta()
+        print("Enviei a resposta")
+        print(resposta)
+        
+Principal()
     
     
     

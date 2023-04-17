@@ -2,7 +2,7 @@ import os
 import socket
 
 class PTATServidor:
-    def __init__(self):
+     def __init__(self):
         self.y = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         endereco_servidor = "localhost", 200
         self.y.bind(endereco_servidor)
@@ -19,13 +19,21 @@ class PTATServidor:
         for i in lista:
             self.y.sendto(i.encode(), endereco_cliente)
             
-    def receber_requisicao(self):
-        pass
-    
-    def enviar_resposta(self, resposta):
-        global endereco_cliente
-        for i in resposta:
-            self.y.sendto(i.encode(), endereco_cliente)
+     def receber_requisicao():
+          requisicao = []
+          for i in range(7):
+               mensagem, endereco_cliente = y.recvfrom(4000000)
+               mensagem = mensagem.decode()
+               print(mensagem) 
+               requisicao.append(mensagem)
+        
+     def enviar_resposta(resposta):
+          global y
+          global endereco_cliente
+          for i in resposta:
+               y.sendto(i.encode(), endereco_cliente)
+               
+               
 
 def formatar_lista(op, length, filename, PATH, code, message, body):
     requisicao = [
