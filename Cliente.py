@@ -29,10 +29,11 @@ class PTATCLiente:
         global endereco_servidor
 
 #fazer funcao pede pro usuario comando, e ela pega o comando e retorna requisicao
-
+"""
 def testando():
     x = input("Insira o comando:")
     print(formatar_msg(x))
+"""
     
 def formatar_msg(msg):
     # Separa a mensagem em partes utilizando o espaço como separador
