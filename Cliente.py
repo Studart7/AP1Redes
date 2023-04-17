@@ -4,19 +4,38 @@ import socket
 
 
 class PTATCLiente:
-    x = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    endereco_servidor = "localhost", 200
-    def enviar_requisicao(self, requisicao):
-        for i in requisicao:
-            self.x.sendto(i.encode(), self.endereco_servidor) 
-    def receber_resposta(self):
-        resposta = []
-        for i in range(5):
-            mensagem, endereco_cliente = self.x.recvfrom(4000000)
+        def enviar_requisicao(self, requisicao):
+            global x
+            global endereco_servidor
+            for i in requisicao:
+                x.sendto(i.encode(), endereco_servidor) 
+
+        def receber_resposta(self):
+            global endereco_cliente
+            global x
+            resposta = []
+            for i in range(7):
+                mensagem, endereco_servidor = x.recvfrom(4000000)
+                mensagem = mensagem.decode()
+                print(mensagem) 
+                resposta.append(mensagem)
+
+        def _init_(self):
+            self.y = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            endereco_servidor = "localhost", 200
+            self.y.bind(endereco_servidor)
+            mensagem, endereco_cliente = self.y.recvfrom(1024)
             mensagem = mensagem.decode()
-            print(mensagem) 
-            resposta.append(mensagem)
-        return resposta
+            print(mensagem)
+            self.y.sendto("oi".encode(), endereco_cliente)
+            lista = []
+            for i in range(3):
+                mensagem, endereco_cliente = self.y.recvfrom(1024)
+                mensagem = mensagem.decode()
+                print(mensagem) 
+                lista.append(mensagem)   
+            for i in lista:
+                self.y.sendto(i.encode(), endereco_cliente)
 
 #fazer funcao pede pro usuario comando, e ela pega o comando e retorna requisicao
 
@@ -61,7 +80,7 @@ def formatar_lista(op, length, filename, PATH, body):
             PATH.ljust(128),
             body
         ]
-        return requisicao
+        return requisicao 
     
 
 
@@ -77,41 +96,3 @@ def Principal():
         print(resposta)
         
 Principal()
-    
-    
-    
-    
-    
-    
-    
-"""
- 
-if __name__ == "__main__":
-    x = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    endereco_servidor = "localhost", 200
-    x.sendto("oi".encode(), endereco_servidor)
-    mensagem, endereco_servidor = x.recvfrom(1024)
-    mensagem = mensagem.decode()
-    print(mensagem)
-    input()
-    
-    lista  = ["oi", "tudo bem", "como vai"]
-    for i in lista:
-        x.sendto(i.encode(), endereco_servidor)
-    for i in lista:
-        mensagem, endereco_servidor = x.recvfrom(1024)
-        mensagem = mensagem.decode()
-        print(mensagem)    
-    input()
-
-    def enviar_requisicao(requisicao):
-        global x
-        global endereco_servidor
-        for i in requisicao:
-            x.sendto(i.encode(), endereco_servidor) 
-
-    def receber_resposta():
-        global x
-        global endereco_servidor
-        
-"""   
