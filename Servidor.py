@@ -1,4 +1,31 @@
 import os;
+import socket
+
+y = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+endereco_servidor = "localhost", 200
+y.bind(endereco_servidor)
+mensagem, endereco_cliente = y.recvfrom(1024)
+mensagem = mensagem.decode()
+print(mensagem)
+y.sendto("oi".encode(), endereco_cliente)
+lista = []
+for i in range(3):
+    mensagem, endereco_cliente = y.recvfrom(1024)
+    mensagem = mensagem.decode()
+    print(mensagem) 
+    lista.append(mensagem)   
+for i in lista:
+    y.sendto(i.encode(), endereco_cliente)
+def receber_requisicao():
+    pass
+def enviar_resposta(resposta):
+    global y
+    global endereco_cliente
+    for i in resposta:
+        y.sendto(i.encode(), endereco_cliente)
+
+
+
 
 def formatar_lista(op, length, filename, PATH, code, message, body):
     requisicao = [

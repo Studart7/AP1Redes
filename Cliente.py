@@ -1,5 +1,39 @@
 import re
 import os
+import socket
+
+x = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+endereco_servidor = "localhost", 200
+x.sendto("oi".encode(), endereco_servidor)
+mensagem, endereco_servidor = x.recvfrom(1024)
+mensagem = mensagem.decode()
+print(mensagem)
+input()
+lista  = ["oi", "tudo bem", "como vai"]
+for i in lista:
+    x.sendto(i.encode(), endereco_servidor)
+for i in lista:
+    mensagem, endereco_servidor = x.recvfrom(1024)
+    mensagem = mensagem.decode()
+    print(mensagem)    
+input()
+def enviar_requisicao(requisicao):
+    global x
+    global endereco_servidor
+    for i in requisicao:
+        x.sendto(i.encode(), endereco_servidor) 
+def receber_resposta():
+    global x
+    global endereco_servidor
+
+
+
+
+
+
+
+
+
 
 #fazer funcao pede pro usuario comando, e ela pega o comando e retorna requisicao
 
@@ -37,8 +71,7 @@ def formatar_msg(msg):
         op = '3'
         caminho_remoto = msg_separada[1]
     return formatar_lista(op, length, filename_remote, caminho_remote, body)
-        
-    
+            
 def formatar_lista(op, length, filename, PATH, body):
         requisicao = [
             op,
