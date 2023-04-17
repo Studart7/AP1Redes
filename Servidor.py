@@ -1,31 +1,31 @@
-import os;
+import os
 import socket
 
-y = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-endereco_servidor = "localhost", 200
-y.bind(endereco_servidor)
-mensagem, endereco_cliente = y.recvfrom(1024)
-mensagem = mensagem.decode()
-print(mensagem)
-y.sendto("oi".encode(), endereco_cliente)
-lista = []
-for i in range(3):
-    mensagem, endereco_cliente = y.recvfrom(1024)
-    mensagem = mensagem.decode()
-    print(mensagem) 
-    lista.append(mensagem)   
-for i in lista:
-    y.sendto(i.encode(), endereco_cliente)
-def receber_requisicao():
-    pass
-def enviar_resposta(resposta):
-    global y
-    global endereco_cliente
-    for i in resposta:
-        y.sendto(i.encode(), endereco_cliente)
-
-
-
+class PTATServidor:
+    def __init__(self):
+        self.y = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        endereco_servidor = "localhost", 200
+        self.y.bind(endereco_servidor)
+        mensagem, endereco_cliente = self.y.recvfrom(1024)
+        mensagem = mensagem.decode()
+        print(mensagem)
+        self.y.sendto("oi".encode(), endereco_cliente)
+        lista = []
+        for i in range(3):
+            mensagem, endereco_cliente = self.y.recvfrom(1024)
+            mensagem = mensagem.decode()
+            print(mensagem) 
+            lista.append(mensagem)   
+        for i in lista:
+            self.y.sendto(i.encode(), endereco_cliente)
+            
+    def receber_requisicao(self):
+        pass
+    
+    def enviar_resposta(self, resposta):
+        global endereco_cliente
+        for i in resposta:
+            self.y.sendto(i.encode(), endereco_cliente)
 
 def formatar_lista(op, length, filename, PATH, code, message, body):
     requisicao = [
@@ -51,7 +51,7 @@ def fileReader(PATH, fileName):
                 message = "Arquivo lido com sucesso"
             else:
                 CODE = 3
-                messaage = "Tamanho do arquivo para ser escrito maior que tamanho máximo permitido"
+                message = "Tamanho do arquivo para ser escrito maior que tamanho máximo permitido"
             file.close()
         else:
             message = "Nome de arquivo não existente no servidor"
@@ -59,26 +59,27 @@ def fileReader(PATH, fileName):
     else:
         message = "Caminho não existente no servidor"
         CODE = 1
+    return formatar_lista("r", lenght, fileName, PATH, CODE, message, BODY)
 
 def fileList(PATH):
     if os.path.exists(PATH):
         if not os.listdir(PATH):
             print("Não há arquivos neste diretório")
         else:
-            for arquivo in os.path.exists(PATH):
+            for arquivo in os.listdir(PATH):
                 print(arquivo)
             BODY = str(os.listdir(PATH))
-            lenght = len(BODY)
-            if lenght < 999999:
+            length = len(BODY)
+            if length < 999999:
                 CODE = 0
                 message = "Arquivo lido com sucesso"
             else: 
                 CODE = 3
-                messaage = "Arquivos demais para serem listados."
+                message = "Arquivos demais para serem listados."
     else:
         message = "Caminho não existente no servidor"
         CODE = 1
-
+    return formatar_lista("l", length, "", PATH, CODE, message, BODY)
 
 def fileDelet(PATH, fileName):
     if os.path.exists(PATH):
@@ -92,6 +93,7 @@ def fileDelet(PATH, fileName):
     else:
         message = "Caminho não existente no servidor."
         CODE = 1
+    return formatar_lista("d", 0, fileName, PATH, CODE, message, "")
 
 def fileWrite(PATH, fileName, BODY):
     if os.path.exists(PATH):
@@ -107,3 +109,5 @@ def fileWrite(PATH, fileName, BODY):
         message = "Caminho não existente no servidor."
         CODE = 1
     
+    
+

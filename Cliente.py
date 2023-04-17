@@ -2,38 +2,31 @@ import re
 import os
 import socket
 
-x = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-endereco_servidor = "localhost", 200
-x.sendto("oi".encode(), endereco_servidor)
-mensagem, endereco_servidor = x.recvfrom(1024)
-mensagem = mensagem.decode()
-print(mensagem)
-input()
-lista  = ["oi", "tudo bem", "como vai"]
-for i in lista:
-    x.sendto(i.encode(), endereco_servidor)
-for i in lista:
+class PTATCLiente:
+    x = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    endereco_servidor = "localhost", 200
     mensagem, endereco_servidor = x.recvfrom(1024)
     mensagem = mensagem.decode()
-    print(mensagem)    
-input()
-def enviar_requisicao(requisicao):
-    global x
-    global endereco_servidor
-    for i in requisicao:
-        x.sendto(i.encode(), endereco_servidor) 
-def receber_resposta():
-    global x
-    global endereco_servidor
+    print(mensagem)
+    input()
+    lista  = ["oi", "tudo bem", "como vai"]
+    for i in lista:
+        x.sendto(i.encode(), endereco_servidor)
+    for i in lista:
+        mensagem, endereco_servidor = x.recvfrom(1024)
+        mensagem = mensagem.decode()
+        print(mensagem)    
+    input()
 
+    def enviar_requisicao(requisicao):
+        global x
+        global endereco_servidor
+        for i in requisicao:
+            x.sendto(i.encode(), endereco_servidor) 
 
-
-
-
-
-
-
-
+    def receber_resposta():
+        global x
+        global endereco_servidor
 
 #fazer funcao pede pro usuario comando, e ela pega o comando e retorna requisicao
 
@@ -82,25 +75,65 @@ def formatar_lista(op, length, filename, PATH, body):
         ]
         return requisicao
     
-def fileReader(PATH, fileName):
-    
-    if os.path.exists(PATH):
-        if os.path.exists(PATH+"/"+fileName):
-            file = open(PATH+"/"+fileName, "r")
-            body = file.read()
-            print(body)
-            lenght = len(body)
-            if lenght < 999999:
-                CODE = 0
-                message = "Arquivo lido com sucesso"
+def fileReader(self, PATH, fileName):
+        if os.path.exists(PATH):
+            if os.path.exists(PATH+"/"+fileName):
+                file = open(PATH+"/"+fileName, "r")
+                body = file.read()
+                print(body)
+                lenght = len(body)
+                if lenght < 999999:
+                    CODE = 0
+                    message = "Arquivo lido com sucesso"
+                else:
+                    CODE = 3
+                    message = "Tamanho do arquivo para ser escrito maior que tamanho máximo permitido"
             else:
-                CODE = 3
-                messaage = "Tamanho do arquivo para ser escrito maior que tamanho máximo permitido"
+                message = "Nome de arquivo não existente no servidor"
+                CODE = 2
         else:
-            message = "Nome de arquivo não existente no servidor"
-            CODE = 2
-    else:
-        message = "Caminho não existente no servidor"
-        CODE = 1
+            message = "Caminho não existente no servidor"
+            CODE = 1
+        return (CODE, message)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+"""
+ 
+if __name__ == "__main__":
+    x = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    endereco_servidor = "localhost", 200
+    x.sendto("oi".encode(), endereco_servidor)
+    mensagem, endereco_servidor = x.recvfrom(1024)
+    mensagem = mensagem.decode()
+    print(mensagem)
+    input()
+    
+    lista  = ["oi", "tudo bem", "como vai"]
+    for i in lista:
+        x.sendto(i.encode(), endereco_servidor)
+    for i in lista:
+        mensagem, endereco_servidor = x.recvfrom(1024)
+        mensagem = mensagem.decode()
+        print(mensagem)    
+    input()
 
-testando()
+    def enviar_requisicao(requisicao):
+        global x
+        global endereco_servidor
+        for i in requisicao:
+            x.sendto(i.encode(), endereco_servidor) 
+
+    def receber_resposta():
+        global x
+        global endereco_servidor
+        
+"""   
